@@ -95,6 +95,16 @@ const TestSchema = new mongoose.Schema(
 );
 const Test = mongoose.model("Test", TestSchema);
 
+app.get("/", (req, res) => {
+  res.json({ ok: true, message: "School API running" });
+});
+
+app.get("/debug", async (req, res) => {
+  const dbName = mongoose.connection?.name;
+  const teachersCount = await Teacher.countDocuments();
+  res.json({ dbName, teachersCount });
+});
+
 // ----------------------
 // TEACHERS CRUD
 // ----------------------
