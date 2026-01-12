@@ -546,7 +546,16 @@ app.get("/courses/:id/average", async (req, res) => {
   res.json({ courseId: id, testCount: courseTests.length, average: avg });
 });
 
+app.get("/__version", (req, res) => {
+  res.json({
+    ok: true,
+    deployedAt: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV || null
+  });
+});
+
 // ----------------------
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
+
