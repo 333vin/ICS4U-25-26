@@ -1,54 +1,48 @@
 [
   {
-    "id": 1,
     "code": "MATH101",
     "name": "Functions and Applications",
-    "teacherId": 1,
+    "teacherId": "696504fc8101f2f248e51891",
     "semester": "Semester 1",
     "room": "B210",
     "schedule": "Mon/Wed/Fri 9:00–10:00"
   },
   {
-    "id": 2,
     "code": "SCI201",
     "name": "Biology: Diversity of Life",
-    "teacherId": 2,
+    "teacherId": "696504fc8101f2f248e51892",
     "semester": "Semester 1",
     "room": "S118",
     "schedule": "Tue/Thu 10:30–12:00"
   },
   {
-    "id": 3,
     "code": "ENG110",
     "name": "Introduction to Literature",
-    "teacherId": 3,
+    "teacherId": "696504fc8101f2f248e51893",
     "semester": "Semester 2",
     "room": "E310",
     "schedule": "Mon/Wed 1:00–2:30"
   },
   {
-    "id": 4,
     "code": "HIS205",
     "name": "World History",
-    "teacherId": 4,
+    "teacherId": "696504fc8101f2f248e51894",
     "semester": "Semester 2",
     "room": "H221",
     "schedule": "Tue/Thu 8:30–10:00"
   },
   {
-    "id": 5,
     "code": "ART150",
     "name": "Visual Arts Foundations",
-    "teacherId": 5,
+    "teacherId": "696504fc8101f2f248e51895",
     "semester": "Semester 1",
     "room": "A105",
     "schedule": "Fri 12:00–3:00"
   },
   {
-    "id": 6,
     "code": "PE100",
     "name": "Healthy Active Living Education",
-    "teacherId": 6,
+    "teacherId": "696504fc8101f2f248e51896",
     "semester": "Full Year",
     "room": "Gym-2",
     "schedule": "Daily 2:45–3:30"
