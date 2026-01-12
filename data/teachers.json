@@ -1,6 +1,5 @@
 [
   {
-    "id": 1,
     "firstName": "Alicia",
     "lastName": "Nguyen",
     "email": "alicia.nguyen@school.edu",
@@ -8,7 +7,6 @@
     "room": "M204"
   },
   {
-    "id": 2,
     "firstName": "Marcus",
     "lastName": "Henderson",
     "email": "marcus.henderson@school.edu",
@@ -16,7 +14,6 @@
     "room": "S118"
   },
   {
-    "id": 3,
     "firstName": "Priya",
     "lastName": "Patel",
     "email": "priya.patel@school.edu",
@@ -24,7 +21,6 @@
     "room": "E310"
   },
   {
-    "id": 4,
     "firstName": "Daniel",
     "lastName": "Carter",
     "email": "daniel.carter@school.edu",
@@ -32,14 +28,13 @@
     "room": "H221"
   },
   {
-    "id": 5,
     "firstName": "Sofia",
     "lastName": "Lopez",
     "email": "sofia.lopez@school.edu",
-    "department": "Arts"
+    "department": "Arts",
+    "room": ""
   },
   {
-    "id": 6,
     "firstName": "Jamal",
     "lastName": "Robinson",
     "email": "jamal.robinson@school.edu",
@@ -47,10 +42,10 @@
     "room": "Gym-2"
   },
   {
-    "id": 7,
     "firstName": "Alex",
     "lastName": "Turner",
     "email": "alex.turner@school.com",
-    "department": "Science"
+    "department": "Science",
+    "room": ""
   }
 ]
