@@ -1,57 +1,79 @@
-console.log("Starting index.js — Node version:", process.version);
-import dotenv from "dotenv";
+import "dotenv/config";
+import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Ensure dotenv loads the project-root .env even when running from `src`
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, "..", ".env") });
-import express from "express";
-import cors from "cors";
-
-import User from "./models/Users.js";
-
-import connectDB from "./db.js";
+import { connectToMongo, getCollection } from "./config/db.js";
 
 const app = express();
-app.use(express.json());
-app.use(cors());
-
 const PORT = process.env.PORT || 3000;
 
-console.log("MONGODB_URI set?", !!process.env.MONGODB_URI);
-try {
-    await connectDB();
-} catch (err) {
-    console.error("Failed to connect to DB — exiting.");
-    process.exit(1);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// form body parsing (for method="post" forms)
+app.use(express.urlencoded({ extended: true }));
+
+// static files (CSS)
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// EJS views
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "..", "views"));
+
+function usersCol() {
+  return getCollection("users");
 }
 
-app.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`);
+// GET page: pull users from Atlas and render table
+app.get("/", async (req, res, next) => {
+  try {
+    const users = await usersCol().find({}).sort({ createdAt: -1 }).toArray();
+    res.render("index", { users });
+  } catch (e) {
+    next(e);
+  }
 });
 
-app.get("/users", async (req, res) => {
-    try {
-        const all = await User.find().lean();
-        res.status(200).json(all);
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
-    }
-})
+// POST form: insert into Atlas then redirect back to /
+app.post("/add-user", async (req, res, next) => {
+  try {
+    const { name, age, gender, phone, address, username, password } = req.body;
 
-app.post("/users", async (req, res) => {
-    try {
-        const { name, phone, address, gender, age, username, password } = req.body;
-        if (!name || !phone || !address || !username || !password) {
-            return res.status(400).json({ error: "Missing required fields." });
-        }
-        const max = await User.findOne().sort({ id: -1 }).select("id").lean();
-        const nextId = (max?.id ?? 0) + 1;
-        const newUser = await User.create({ name, phone, address, gender, age, username, password });
-        res.status(201).json(newUser);
-    } catch (err) {
-        res.status(500).json({ error: "Server error" });
+    if (!name || !age || !gender || !phone || !address || !username || !password) {
+      return res.status(400).send("Missing required fields.");
     }
-})
+
+    // IMPORTANT: don’t store plaintext passwords in real life.
+    // For your assignment, store it if required—but NEVER render it back.
+    const doc = {
+      userId: "u" + Date.now(),           // string id (simple unique)
+      name: String(name).trim(),
+      age: Number(age),
+      gender: String(gender).trim(),
+      phone: String(phone).trim(),
+      address: String(address).trim(),
+      username: String(username).trim(),
+      password: String(password),         // stored but not shown
+      createdAt: new Date().toISOString()
+    };
+
+    await usersCol().insertOne(doc);
+    res.redirect("/");
+  } catch (e) {
+    next(e);
+  }
+});
+
+// basic error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send("Server error");
+});
+
+async function start() {
+  await connectToMongo();
+  app.listen(PORT, "0.0.0.0", () => console.log("Listening on " + PORT));
+}
+
+start();

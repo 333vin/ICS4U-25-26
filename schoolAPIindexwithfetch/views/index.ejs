@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+ 
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Records</title>
+    <link rel="stylesheet" href="style/style.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUsers();
+        })
+ 
+        async function loadUsers() {
+            try {
+                const res = await fetch("https://ics4u-a-25-26-dom-practice.onrender.com/users");
+                if (!res.ok) throw new Error(`Response status: ${res.status}`);
+                const users = await res.json();
+                const tableBody = document.querySelector("tbody");
+                users.forEach(u => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${u.name}</td>
+                        <td>${u.phone}</td>
+                        <td>${u.address}</td>
+                        <td>${u.gender}</td>
+                        <td>${u.age}</td>
+                        <td>${u.username}</td>
+                        <td><span class="pill ok">••••••••</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            catch (error) {
+                alert(`Error loading users. Please try again. Error message: ${error}`);
+            }
+        };
+ 
+        async function newUser() {
+            const formEl = document.getElementById('form');
+            try {
+                const formData = new FormData(formEl);
+                const data = Object.fromEntries(formData);
+ 
+                const res = await fetch('https://ics4u-a-25-26-dom-practice.onrender.com/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+ 
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || `Server responded ${res.status}`);
+                }
+ 
+                const created = await res.json();
+ 
+                // Append new row to the table (don't display plaintext password)
+                const tbody = document.querySelector('tbody');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${created.name}</td>
+                    <td>${created.phone}</td>
+                    <td>${created.address}</td>
+                    <td>${created.gender}</td>
+                    <td>${created.age}</td>
+                    <td>${created.username}</td>
+                    <td><span class="pill ok">••••••••</span></td>
+                `;
+                tbody.appendChild(tr);
+ 
+                formEl.reset();
+            }
+            catch (error) {
+                alert(`Error adding user: ${error}`);
+            }
+        }
+           
+    </script>
+</head>
+ 
+<body>
+    <header>
+        <h1>User Records</h1>
+        <p>
+            Add a user with the form on the left and display records in the table on the right.
+            <span class="hint">(No JavaScript—form submission requires a server to actually add rows.)</span>
+        </p>
+    </header>
+    <main class="wrap">
+        <!-- FORM -->
+        <section class="card" aria-label="Add user form">
+            <div class="card-head">
+                <h2>Add a Record</h2>
+                <span class="hint">Fields marked * are required</span>
+            </div>
+            <!--
+        No JS version:
+        - Set action to your backend endpoint (e.g., /add-user)
+        - Use method="post" to send form data
+      -->
+            <form id="form" autocomplete="on">
+                <fieldset>
+                    <legend>Identity</legend>
+                    <div class="grid">
+                        <label>
+                            Full Name *
+                            <input name="name" type="text" placeholder="e.g., Kevin DesLauriers" required />
+                        </label>
+                        <div class="grid two">
+                            <label>
+                                Age *
+                                <input name="age" type="number" min="0" max="130" placeholder="e.g., 52" required />
+                            </label>
+                            <label>
+                                Gender *
+                                <select name="gender" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Non-binary">Non-binary</option>
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Contact</legend>
+                    <div class="grid">
+                        <label>
+                            Phone Number *
+                            <input name="phone" type="tel" placeholder="e.g., (416) 555-0123" required />
+                        </label>
+                        <label>
+                            Address *
+                            <textarea name="address" placeholder="Street, City, Province/State, Postal/ZIP"
+                                required></textarea>
+                        </label>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Account</legend>
+                    <div class="grid two">
+                        <label>
+                            Username *
+                            <input name="username" type="text" placeholder="e.g., kevin_d" required />
+                        </label>
+                        <label>
+                            Password *
+                            <input name="password" type="password" placeholder="Enter a password" required />
+                        </label>
+                    </div>
+                    <div class="row">
+                        <span class="req">Tip: Use HTTPS + server-side validation for passwords.</span>
+                    </div>
+                </fieldset>
+                <div class="actions">
+                    <button class="btn primary" type="button" onclick="newUser()">Add Record</button>
+                    <button class="btn ghost" type="reset">Clear</button>
+                </div>
+            </form>
+            <div class="note">
+                <strong>Note:</strong> Without JavaScript, the browser can’t update the table on this page after submit.
+                Point <code>action</code> to a server route that saves the record and re-renders the page with the
+                updated table.
+            </div>
+        </section>
+        <!-- TABLE -->
+        <section class="card table-wrap" aria-label="User records table">
+            <div class="card-head">
+                <h2>Current Records</h2>
+                <span class="hint">Example rows below</span>
+            </div>
+            <div class="table-scroller" role="region" aria-label="Scrollable user records table" tabindex="0">
+                <table id="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Gender</th>
+                            <th>Age</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+  <% users.forEach(u => { %>
+    <tr>
+      <td><%= u.name %></td>
+      <td><%= u.phone %></td>
+      <td><%= u.address %></td>
+      <td><span class="pill"><%= u.gender %></span></td>
+      <td><%= u.age %></td>
+      <td><%= u.username %></td>
+      <td><span class="pill ok">••••••••</span></td>
+    </tr>
+  <% }) %>
+</tbody>
+                        
+                </table>
+            </div>
+            <div class="note">
+                For real use, don’t display passwords in plaintext. Store hashed passwords on the server and never
+                render them back.
+            </div>
+        </section>
+    </main>
+    <footer>
+        HTML + CSS only. If you want this to actually “add to the table” without JS, you need a server to handle the
+        POST.
+    </footer>
+</body>
+ 
+</html>
+ 

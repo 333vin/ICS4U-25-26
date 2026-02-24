@@ -1,11 +1,20 @@
-import mongoose from "mongoose";
- 
-export default async function connectDB() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    throw err;
-  }
+import { MongoClient } from "mongodb";
+
+let client;
+let db;
+
+export async function connectToMongo() {
+  if (db) return db;
+
+  client = new MongoClient(process.env.MONGODB_URI);
+  await client.connect();
+
+  db = client.db(process.env.DB_NAME);
+  console.log("Connected to MongoDB");
+  return db;
+}
+
+export function getCollection(name) {
+  if (!db) throw new Error("DB not connected yet");
+  return db.collection(name);
 }
