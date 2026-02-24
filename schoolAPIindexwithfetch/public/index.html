@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User Records</title>
-    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="/style/style.css">
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             loadUsers();
@@ -13,7 +13,7 @@
  
         async function loadUsers() {
             try {
-                const res = await fetch("https://ics4u-a-25-26-dom-practice.onrender.com/users");
+                const res = await fetch("/users");
                 if (!res.ok) throw new Error(`Response status: ${res.status}`);
                 const users = await res.json();
                 const tableBody = document.querySelector("tbody");
@@ -42,7 +42,7 @@
                 const formData = new FormData(formEl);
                 const data = Object.fromEntries(formData);
  
-                const res = await fetch('https://ics4u-a-25-26-dom-practice.onrender.com/users', {
+                const res = await fetch('/users', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -186,19 +186,8 @@
                         </tr>
                     </thead>
                     <tbody>
-  <% users.forEach(u => { %>
-    <tr>
-      <td><%= u.name %></td>
-      <td><%= u.phone %></td>
-      <td><%= u.address %></td>
-      <td><span class="pill"><%= u.gender %></span></td>
-      <td><%= u.age %></td>
-      <td><%= u.username %></td>
-      <td><span class="pill ok">••••••••</span></td>
-    </tr>
-  <% }) %>
-</tbody>
-                        
+                       
+                    </tbody>
                 </table>
             </div>
             <div class="note">
